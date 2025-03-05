@@ -1,5 +1,5 @@
 "use client";
-// Updated index.tsx without drag and drop functionality
+
 import { useState, useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
@@ -22,62 +22,6 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Todo } from "../Types";
 
-// Sortable Todo Item component
-function SortableTodoItem({
-  todo,
-  toggleTodo,
-}: {
-  todo: Todo;
-  toggleTodo: (id: number) => void;
-}) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: todo.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  return (
-    <li
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      className="border-b border-gray-200 last:border-b-0"
-    >
-      <div className="flex items-center p-4 cursor-grab" {...listeners}>
-        <button
-          onClick={() => toggleTodo(todo.id)}
-          className={`w-6 h-6 rounded-full border border-gray-300 mr-3 flex items-center justify-center ${
-            todo.completed ? "bg-gradient-to-r from-purple-500 to-blue-500" : ""
-          }`}
-        >
-          {todo.completed && (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="11"
-              height="9"
-              fill="none"
-              viewBox="0 0 11 9"
-            >
-              <path stroke="#fff" strokeWidth="2" d="M1 4.304L3.696 7l6-6" />
-            </svg>
-          )}
-        </button>
-        <span
-          className={`${
-            todo.completed
-              ? "line-through text-(--light-light-grayish-blue)"
-              : ""
-          }`}
-        >
-          {todo.text}
-        </span>
-      </div>
-    </li>
-  );
-}
-
 export default function Home() {
   const [todos, setTodos] = useState<Todo[]>([
     { id: 1, text: "Complete online JavaScript course", completed: true },
@@ -91,6 +35,73 @@ export default function Home() {
   const [newTodo, setNewTodo] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "completed">("all");
   const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Sortable Todo Item component
+  function SortableTodoItem({
+    todo,
+    toggleTodo,
+  }: {
+    todo: Todo;
+    toggleTodo: (id: number) => void;
+  }) {
+    const { attributes, listeners, setNodeRef, transform, transition } =
+      useSortable({ id: todo.id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+
+    // Fix: Handle the toggle separately from drag
+    const handleToggle = (e: React.MouseEvent) => {
+      e.stopPropagation(); // Prevent drag from being triggered
+      toggleTodo(todo.id);
+    };
+
+    return (
+      <li
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        className="border-b border-gray-200"
+        key={todo.id}
+      >
+        <div className="flex items-center p-4">
+          <button
+            onClick={handleToggle}
+            className={`w-6 h-6 rounded-full border border-gray-300 mr-3 flex items-center justify-center cursor-pointer ${
+              todo.completed
+                ? "bg-gradient-to-r from-(--gradient-primary) to-(--gradient-secondary)"
+                : ""
+            }`}
+          >
+            {todo.completed && (
+              <Image
+                src="/images/icon-check.svg"
+                width={12}
+                height={9}
+                alt="Check Icon"
+              />
+            )}
+          </button>
+          <span
+            className={`flex-grow cursor-grab ${
+              isDarkMode
+                ? todo.completed
+                  ? "line-through text-(--dark-very-dark-grayish-blue-1)" // Dark mode, completed: white text with strike
+                  : "text-(--dark-light-grayish-blue)" // Dark mode, not completed: white text
+                : todo.completed
+                ? "line-through text-(--light-light-grayish-blue)" // Light mode, completed: light gray text with strike
+                : "text-(--light-very-dark-grayish-blue)" // Light mode, not completed: dark text
+            } ${isDarkMode ? "border-gray-700" : "border-gray-300"}`}
+            {...listeners}
+          >
+            {todo.text}
+          </span>
+        </div>
+      </li>
+    );
+  }
 
   // Setup DnD sensors
   const sensors = useSensors(
@@ -159,7 +170,7 @@ export default function Home() {
   return (
     <div
       className={`min-h-screen transition-colors duration-300 ${
-        isDarkMode ? "bg-gray-900" : "bg-gray-100"
+        isDarkMode ? "bg-dark-desaturated" : "bg-light-very-light-gray"
       }`}
     >
       <Head>
@@ -168,24 +179,26 @@ export default function Home() {
       </Head>
 
       {/* Background image */}
-      <div className="relative w-full h-72 bg-gradient-to-r from-purple-500 to-blue-500 z-0">
+      <div className="relative w-full h-72 bg-gradient-to-r from-(--gradient-secondary) to-(--gradient-primary) z-0">
         {/* You will import your background image here */}
         {isDarkMode && (
           <Image
             src="/images/bg-desktop-dark.jpg"
             alt="Background Image"
-            layout="fill"
-            objectFit="cover"
+            width={1440}
+            height={300}
             quality={100}
+            className="w-full h-full"
           />
         )}
         {!isDarkMode && (
           <Image
             src="/images/bg-desktop-light.jpg"
             alt="Background Image"
-            layout="fill"
-            objectFit="cover"
+            width={1440}
+            height={300}
             quality={100}
+            className="w-full h-full"
           />
         )}
       </div>
@@ -210,7 +223,7 @@ export default function Home() {
                 src="/images/icon-moon.svg"
                 width={20}
                 height={20}
-                alt="Sun Icon"
+                alt="Moon Icon"
               />
             )}
           </button>
@@ -219,8 +232,10 @@ export default function Home() {
         {/* New Todo Input */}
         <form onSubmit={handleSubmit} className="mb-6">
           <div
-            className={`flex items-center bg-(--light-very-light-gray) rounded-md shadow-md p-4 ${
-              isDarkMode ? "bg-gray-800 text-white" : ""
+            className={`flex items-center rounded-md shadow-md p-4 ${
+              isDarkMode
+                ? "bg-dark-desaturated text-(--dark-light-grayish-blue)"
+                : "bg-light-very-light-gray"
             }`}
           >
             <div className="w-6 h-6 rounded-full border border-gray-300 mr-3"></div>
@@ -229,7 +244,7 @@ export default function Home() {
               placeholder="Create a new todo..."
               className={`w-full outline-none ${
                 isDarkMode
-                  ? "bg-gray-800 text-white"
+                  ? "bg-dark-desaturated text-(--dark-light-grayish-blue)"
                   : "text-(--light-very-dark-grayish-blue)"
               }`}
               value={newTodo}
@@ -240,10 +255,10 @@ export default function Home() {
 
         {/* Todo List */}
         <div
-          className={`bg-(--light-very-light-gray) rounded-md shadow-md overflow-hidden ${
+          className={`rounded-md shadow-md overflow-hidden ${
             isDarkMode
-              ? "bg-gray-800 text-white"
-              : "text-(--light-very-dark-grayish-blue)"
+              ? "bg-dark-desaturated text-(--dark-light-grayish-blue)"
+              : "text-(--light-very-dark-grayish-blue) bg-light-very-light-gray"
           }`}
         >
           <DndContext
@@ -268,14 +283,22 @@ export default function Home() {
           </DndContext>
 
           {/* Todo Footer */}
-          <div className="flex justify-between items-center p-4 text-sm text-(--light-very-dark-grayish-blue)">
-            <span>{activeTodosCount} items left</span>
+          <div
+            className={`${
+              isDarkMode
+                ? "text-(--dark-dark-grayish-blue)" // dark mode
+                : "text-(--light-light-grayish-blue)" // light mode
+            } flex justify-between items-center p-4 text-sm font-normal`}
+          >
+            <span className="font-semibold">{activeTodosCount} items left</span>
 
-            <div className="hidden md:flex space-x-4">
+            <div className="hidden md:flex space-x-4 text-(--light-dark-grayish-blue)">
               <button
                 onClick={() => setFilter("all")}
                 className={`${
-                  filter === "all" ? "text-blue-500 font-bold" : ""
+                  filter === "all"
+                    ? "font-bold text-(--primary-bright-blue)"
+                    : "font-bold"
                 }`}
               >
                 All
@@ -283,7 +306,9 @@ export default function Home() {
               <button
                 onClick={() => setFilter("active")}
                 className={`${
-                  filter === "active" ? "text-blue-500 font-bold" : ""
+                  filter === "active"
+                    ? "font-bold text-(--primary-bright-blue)"
+                    : "font-bold"
                 }`}
               >
                 Active
@@ -291,21 +316,25 @@ export default function Home() {
               <button
                 onClick={() => setFilter("completed")}
                 className={`${
-                  filter === "completed" ? "text-blue-500 font-bold" : ""
+                  filter === "completed"
+                    ? "font-bold text-(--primary-bright-blue)"
+                    : "font-bold"
                 }`}
               >
                 Completed
               </button>
             </div>
 
-            <button onClick={clearCompleted}>Clear Completed</button>
+            <button onClick={clearCompleted} className="font-semibold">
+              Clear Completed
+            </button>
           </div>
         </div>
 
         {/* Mobile Filter Buttons */}
         <div
-          className={`md:hidden mt-4 p-4 bg-(--light-very-light-gray) rounded-md shadow-md flex justify-center space-x-4 ${
-            isDarkMode ? "bg-gray-800 text-white" : ""
+          className={`md:hidden mt-4 p-4  rounded-md shadow-md flex justify-center space-x-4 ${
+            isDarkMode ? "bg-gray-800 text-white" : "bg-light-very-light-gray"
           }`}
         >
           <button
@@ -328,11 +357,11 @@ export default function Home() {
           </button>
           <button
             onClick={() => setFilter("completed")}
-            className={`${
-              filter === "completed"
-                ? "text-(--primary-bright-blue) font-bold"
-                : ""
-            }`}
+            className={` ${
+              isDarkMode
+                ? "bg-gray-800 text-gray-200"
+                : "bg-light-very-light-gray text-(--primary-bright-blue)"
+            }${filter === "completed" ? "font-bold" : ""}`}
           >
             Completed
           </button>
