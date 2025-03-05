@@ -63,7 +63,11 @@ export default function Home() {
         ref={setNodeRef}
         style={style}
         {...attributes}
-        className="border-b border-gray-200"
+        className={`${
+          isDarkMode
+            ? "border-(--dark-very-dark-grayish-blue-2)" // dark mode
+            : "border-(--light-light-grayish-blue)" // light mode
+        } border-b`}
         key={todo.id}
       >
         <div className="flex items-center p-4">
