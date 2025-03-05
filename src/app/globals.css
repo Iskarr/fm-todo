@@ -62,3 +62,39 @@ body {
 .bg-light-very-light-gray {
   background: var(--light-very-light-gray);
 }
+
+.custom-caret {
+  caret-color: var(--primary-bright-blue);
+}
+
+.toggle-button {
+  text-decoration: inherit;
+  font-family: system-ui;
+}
+
+.border-gradient {
+  position: relative;
+  border-radius: 20px; /* Set border radius */
+  background-clip: padding-box; /* Prevents background from extending beneath border */
+}
+
+.border-gradient:hover::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 20px;
+  padding: 2px; /* Controls border thickness */
+  background: linear-gradient(
+    to left,
+    var(--gradient-secondary),
+    var(--gradient-primary)
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none; /* Makes the pseudo-element clickthrough */
+}

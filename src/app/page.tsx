@@ -73,7 +73,7 @@ export default function Home() {
         <div className="flex items-center p-4">
           <button
             onClick={handleToggle}
-            className={`w-6 h-6 rounded-full border border-gray-300 mr-3 flex items-center justify-center cursor-pointer ${
+            className={`w-6 h-6 rounded-full border border-gray-300 mr-3 flex items-center justify-center cursor-pointer border-gradient border-gradient-purple toggle-button ${
               todo.completed
                 ? "bg-gradient-to-r from-(--gradient-primary) to-(--gradient-secondary)"
                 : ""
@@ -236,7 +236,7 @@ export default function Home() {
         {/* New Todo Input */}
         <form onSubmit={handleSubmit} className="mb-6">
           <div
-            className={`flex items-center rounded-md shadow-md p-4 ${
+            className={`flex items-center rounded-md shadow-md p-4 custom-caret ${
               isDarkMode
                 ? "bg-dark-desaturated text-(--dark-light-grayish-blue)"
                 : "bg-light-very-light-gray"
@@ -303,7 +303,7 @@ export default function Home() {
                   filter === "all"
                     ? "font-bold text-(--primary-bright-blue)"
                     : "font-bold"
-                }`}
+                } cursor-pointer`}
               >
                 All
               </button>
@@ -313,7 +313,7 @@ export default function Home() {
                   filter === "active"
                     ? "font-bold text-(--primary-bright-blue)"
                     : "font-bold"
-                }`}
+                } cursor-pointer`}
               >
                 Active
               </button>
@@ -323,13 +323,16 @@ export default function Home() {
                   filter === "completed"
                     ? "font-bold text-(--primary-bright-blue)"
                     : "font-bold"
-                }`}
+                } cursor-pointer`}
               >
                 Completed
               </button>
             </div>
 
-            <button onClick={clearCompleted} className="font-semibold">
+            <button
+              onClick={clearCompleted}
+              className="font-semibold cursor-pointer"
+            >
               Clear Completed
             </button>
           </div>
