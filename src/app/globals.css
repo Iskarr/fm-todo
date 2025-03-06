@@ -98,3 +98,10 @@ body {
   mask-composite: exclude;
   pointer-events: none; /* Makes the pseudo-element clickthrough */
 }
+
+.highlight-dark:hover {
+  color: var(--dark-light-grayish-blue-hover);
+}
+.highlight-light:hover {
+  color: var(--light-very-dark-grayish-blue);
+}

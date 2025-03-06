@@ -102,6 +102,16 @@ export default function Home() {
           >
             {todo.text}
           </span>
+          <button
+            onClick={() => setTodos(todos.filter((t) => t.id !== todo.id))}
+          >
+            <Image
+              src="/images/icon-cross.svg"
+              width={18}
+              height={18}
+              alt="Cross Icon"
+            />
+          </button>
         </div>
       </li>
     );
@@ -291,19 +301,31 @@ export default function Home() {
             className={`${
               isDarkMode
                 ? "text-(--dark-dark-grayish-blue)" // dark mode
-                : "text-(--light-light-grayish-blue)" // light mode
+                : "text-(--light-dark-grayish-blue)" // light mode
             } flex justify-between items-center p-4 text-sm font-normal`}
           >
             <span className="font-semibold">{activeTodosCount} items left</span>
 
-            <div className="hidden md:flex space-x-4 text-(--light-dark-grayish-blue)">
+            <div
+              className={`${
+                isDarkMode
+                  ? "text-(--light-dark-grayish-blue)" // dark mode
+                  : "text-(--light-dark-grayish-blue)" // light mode
+              } hidden md:flex space-x-4`}
+            >
               <button
                 onClick={() => setFilter("all")}
                 className={`${
                   filter === "all"
                     ? "font-bold text-(--primary-bright-blue)"
                     : "font-bold"
-                } cursor-pointer`}
+                } cursor-pointer ${
+                  filter === "all"
+                    ? ""
+                    : isDarkMode
+                    ? "highlight-dark"
+                    : "highlight-light"
+                }`}
               >
                 All
               </button>
@@ -313,7 +335,13 @@ export default function Home() {
                   filter === "active"
                     ? "font-bold text-(--primary-bright-blue)"
                     : "font-bold"
-                } cursor-pointer`}
+                } cursor-pointer ${
+                  filter === "active"
+                    ? ""
+                    : isDarkMode
+                    ? "highlight-dark"
+                    : "highlight-light"
+                }`}
               >
                 Active
               </button>
@@ -323,7 +351,13 @@ export default function Home() {
                   filter === "completed"
                     ? "font-bold text-(--primary-bright-blue)"
                     : "font-bold"
-                } cursor-pointer`}
+                } cursor-pointer ${
+                  filter === "completed"
+                    ? ""
+                    : isDarkMode
+                    ? "highlight-dark"
+                    : "highlight-light"
+                }`}
               >
                 Completed
               </button>
@@ -331,7 +365,9 @@ export default function Home() {
 
             <button
               onClick={clearCompleted}
-              className="font-semibold cursor-pointer"
+              className={`font-semibold cursor-pointer ${
+                isDarkMode ? "highlight-dark" : "highlight-light"
+              }`}
             >
               Clear Completed
             </button>
