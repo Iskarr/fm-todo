@@ -376,14 +376,24 @@ export default function Home() {
 
         {/* Mobile Filter Buttons */}
         <div
-          className={`md:hidden mt-4 p-4  rounded-md shadow-md flex justify-center space-x-4 ${
-            isDarkMode ? "bg-gray-800 text-white" : "bg-light-very-light-gray"
-          }`}
+          className={`md:hidden mt-4 p-4 rounded-md shadow-md flex justify-center space-x-4 ${
+            isDarkMode
+              ? "text-(--dark-dark-grayish-blue)" // dark mode
+              : "text-(--light-dark-grayish-blue)" // light mode
+          } `}
         >
           <button
             onClick={() => setFilter("all")}
             className={`${
-              filter === "all" ? "text-(--primary-bright-blue) font-bold" : ""
+              filter === "all"
+                ? "font-bold text-(--primary-bright-blue)"
+                : "font-bold"
+            } cursor-pointer ${
+              filter === "all"
+                ? ""
+                : isDarkMode
+                ? "highlight-dark"
+                : "highlight-light"
             }`}
           >
             All
@@ -392,19 +402,31 @@ export default function Home() {
             onClick={() => setFilter("active")}
             className={`${
               filter === "active"
-                ? "text-(--primary-bright-blue) font-bold"
-                : ""
+                ? "font-bold text-(--primary-bright-blue)"
+                : "font-bold"
+            } cursor-pointer ${
+              filter === "active"
+                ? ""
+                : isDarkMode
+                ? "highlight-dark"
+                : "highlight-light"
             }`}
           >
             Active
           </button>
           <button
             onClick={() => setFilter("completed")}
-            className={` ${
-              isDarkMode
-                ? "bg-gray-800 text-gray-200"
-                : "bg-light-very-light-gray text-(--primary-bright-blue)"
-            }${filter === "completed" ? "font-bold" : ""}`}
+            className={`${
+              filter === "completed"
+                ? "font-bold text-(--primary-bright-blue)"
+                : "font-bold"
+            } cursor-pointer ${
+              filter === "completed"
+                ? ""
+                : isDarkMode
+                ? "highlight-dark"
+                : "highlight-light"
+            }`}
           >
             Completed
           </button>
